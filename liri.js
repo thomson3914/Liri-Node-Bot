@@ -1,141 +1,122 @@
 require("dotenv").config();
 
 var request = require("request");
+
 var fs = require("fs");
+
 var keys = require("./keys.js");
 
-var spotify = require("node-spotify-api");
-var Spotify = new spotify(keys.spotify);
+var Spotify = require("node-spotify-api");
+
+var spotify = new Spotify(keys.spotify);
 
 
-var command = process.argv[2];
-var search = process.argv[3];
+// Log input into log.txt
+var addToLog = "node liri.js ";
 
-
-function logData(log) {
-    fs.appendFile("log.txt", log, (error) => {
-        if (error) {
-            throw error;
-        } else {
-            console.log("log ok");
-        }
-    });
+for(var i = 2; i < process.argv.length; i++){
+  addToLog += process.argv[i] + " ";
 }
+addToLog = addToLog.substring(0, addToLog.length - 1); 
+fs.appendFile("log.txt", addToLog + '\n', function(err) {
+  
+  
+  if(err){
+    console.log('Error in user logging: ' + err);
+  }
 
-function getMeSpotify(search) {
-    var songname = search;
-    var log = ""
-    if (!search) {
-        var songname = "The Sign";
+});
+
+
+var getArtistNames = function(artist) {
+    return artist.name;
+  };
+
+var getMeSpotify = function (songName) {
+    if (songName === undefined) {
+        songName = "The Sign";
     }
 
-    Spotify.search({ type: "track", query: songname }, function (error, data) {
-
-        if (!error) {
+    spotify.search({
+        type: "track",
+        query: songName
+    },
+        function (err, data) {
+            if (err) {
+                console.log("Error: " + err);
+                return;
+            }
             var song = data.tracks.items;
             for (var i = 0; i < 5; i++) {
-                if (song[i]) {
-                    var artists = "unavailable";
-                    if (song[i].artists[0]) {
-                        artists = "";
-                        for (x = 0; x < song[i].artists.length; x++) {
-                            artists += song[i].artists[x].name
-                            if (x + 1 < song[i].artists.length) {
-                                artists += ", "; 
-                            }
-                        }
-                    }
-                    var preview = "unavailable";
-                    if (song[i].preview_url) { 
-                        preview = song[i].preview_url;
-                    }
-                    var music =
-                        "==========================" + "\r\n" +
-                        "- Artist(s): " + artists + "\r\n" +
-                        "- Song's Name: " + song[i].name + "\r\n" +
-                        "- Preview link: " + preview + "\r\n" +
-                        "- Album: " + song[i].album.name + "\r\n";
-                    log += music;
-                }
-            }
-        } else {
-            console.log("Error :" + error);
+                console.log(i);
+                console.log("//=================== Song Details ======================//");
+                console.log("artist(s): " + song[i].artists.map(getArtistNames));
+                console.log("song name: " + song[i].name);
+                console.log("preview song: " + song[i].preview_url);
+                console.log("album: " + song[i].album.name);
+                console.log("//=======================================================//");
         }
-        console.log(log);
-        logData(log); 
-    });
+    } 
+    );
+};
 
-}
+var getMeMovie = function (movieName) {
 
-function getMeMovies(search) {
-    var movie = search;
-    var log = "";
-    if (!search) {
-        var movie = "Mr. Nobody";
+    if (movieName === undefined) {
+        movieName = "Mr. Nobody";
         log += "If you haven't watched 'Mr. Nobody', then you should: <http://www.imdb.com/title/tt0485947/> - It's on Netflix!";
     }
-    var url = "http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy";
-    request(url,
-        function (error, response, body) {
-            if (!error && response.statusCode === 200) {
-                var movieData =
-                    "========================" + "\r\n" +
-                    "title: " + JSON.parse(body).Title + "\r\n" +
-                    "Year: " + JSON.parse(body).Year + "\r\n" +
-                    "IMDB rating: " + JSON.parse(body).imdbRating + "\r\n";
-                if (JSON.parse(body).Ratings[1]) {
-                    movieData += 
-                    "Rotten Tomatoes rating: " + JSON.parse(body).Ratings[1].Value + "\r\n";
-                }
-                else {
-                    movieData += 
-                    "Rotten Tomatoes rating: not rated.\r\n";
-                }
-                movieData += 
-                    "Country: " + JSON.parse(body).Country + "\r\n" +
-                    "Language : " + JSON.parse(body).Language + "\r\n" +
-                    "Plot: " + JSON.parse(body).Plot + "\r\n" +
-                    "Actors: " + JSON.parse(body).Actors + "\r\n" +
-                    "========================" + "\r\n";
-                log += movieData;
-                console.log(log);
-                logData(log);
-            } else {
-                console.log("OMDB error: " + error);
-                return;
-            };
+    var url = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+    request(url, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            var jsonData = JSON.parse(body);
+            console.log("//================== Movie Details ======================//");
+            console.log("Title: " + jsonData.Title);
+            console.log("Year: " + jsonData.Year);
+            console.log("Rated: " + jsonData.Rated);
+            console.log("IMDB Rating: " + jsonData.imdbRating);
+            console.log("Country: " + jsonData.Country);
+            console.log("Language: " + jsonData.Language);
+            console.log("Plot: " + jsonData.Plot);
+            console.log("Actors: " + jsonData.Actors);
+            console.log("Rotton Tomatoes Rating: " + jsonData.Ratings[1].Value);
+            console.log("//=======================================================//");
+        }            
+    });
+};
 
-        });
-}
-
-function doWhatItSays() {
+var doWhatItSays = function () {
     fs.readFile("random.txt", "utf8", function (error, data) {
-        if (!error) {
-            var resultsarray = data.split("\r\n");
-        
-            for (var j = 0; j < resultsarray.length; j++) {    
-                console.log(JSON.stringify(resultsarray[j]));
-                var res = resultsarray[j].split(","); 
-                console.log("res2:" + res[1]);
-                commandLiri(res[0], res[1]); 
-            }
-        } else {
-            console.log("random.txt file error : " + error);
+        console.log(data);
+        var dataArr = data.split(",");
+        if (dataArr.length === 2) {
+            pick(dataArr[0], dataArr[1]);
+        } else if (dataArr.length === 1) {
+            pick(dataArr[0]);
         }
     });
-}
-
-function commandLiri(command, search) {
-    if (command === "spotify-this-song") {
-        getMeSpotify(search);
-    }
-    else if (command === "movie-this") {
-        getMeMovies(search);
-    }
-    else if (command === "do-what-it-says") {
-        doWhatItSays(); 
-    }
+};
 
 
-}
-commandLiri(command, search); 
+// Function for determining which command is executed
+var pick = function (caseData, functionData) {
+    switch (caseData) {
+        case "spotify-this-song":
+            getMeSpotify(functionData);
+            break;
+        case "movie-this":
+            getMeMovie(functionData);
+            break;
+        case "do-what-it-says":
+            doWhatItSays();
+            break;
+        default:
+            console.log("LIRI doesn't know that");
+    }
+};
+
+var runThis = function (argOne, argTwo) {
+    pick(argOne, argTwo);
+};
+
+runThis(process.argv[2], process.argv[3]);

@@ -1,2 +1,4 @@
 spotify-this-song, "Peaches"
 movie-this, "Star Wars"
+spotify-this-song, "Smells like Teen Spirit"
+movie-this, "Forrest Gump"
