@@ -542,3 +542,17 @@ node liri.js spotify-this-song peaches
 node liri.js do-what-it-says
 node liri.js do-what-it-says
 node liri.js movie-this forrest gump
+node liri.j
+node liri.j
+node liri.j
+node liri.jsspotify-this-song macarena
+node liri.j
+node liri.jsmovie-this caddy shack
+node liri.jsmovie-this babe
+node liri.jsmovie-this babe
+node liri.js
+node liri.js do-what-it-says
+node liri.js do-what-it-says
+node liri.js spotify-this-song short people
+node liri.js movie-this caddy shack
+node liri.js movie-this star wars

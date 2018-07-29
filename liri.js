@@ -14,23 +14,20 @@ var spotify = new Spotify(keys.spotify);
 // Log input into log.txt
 var addToLog = "node liri.js ";
 
-for(var i = 2; i < process.argv.length; i++){
-  addToLog += process.argv[i] + " ";
+for (var i = 2; i < process.argv.length; i++) {
+    addToLog += process.argv[i] + " ";
 }
-addToLog = addToLog.substring(0, addToLog.length - 1); 
-fs.appendFile("log.txt", addToLog + '\n', function(err) {
-  
-  
-  if(err){
-    console.log('Error in user logging: ' + err);
-  }
-
+addToLog = addToLog.substring(0, addToLog.length - 1);
+fs.appendFile("log.txt", addToLog + '\n', function (err) {
+    if (err) {
+        console.log('Error in user logging: ' + err);
+    }
 });
 
 
-var getArtistNames = function(artist) {
+var getArtistNames = function (artist) {
     return artist.name;
-  };
+};
 
 var getMeSpotify = function (songName) {
     if (songName === undefined) {
@@ -48,6 +45,7 @@ var getMeSpotify = function (songName) {
             }
             var song = data.tracks.items;
             for (var i = 0; i < 5; i++) {
+                console.log("");
                 console.log(i);
                 console.log("//=================== Song Details ======================//");
                 console.log("artist(s): " + song[i].artists.map(getArtistNames));
@@ -55,8 +53,8 @@ var getMeSpotify = function (songName) {
                 console.log("preview song: " + song[i].preview_url);
                 console.log("album: " + song[i].album.name);
                 console.log("//=======================================================//");
+            }
         }
-    } 
     );
 };
 
@@ -70,6 +68,7 @@ var getMeMovie = function (movieName) {
     request(url, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             var jsonData = JSON.parse(body);
+            console.log("");
             console.log("//================== Movie Details ======================//");
             console.log("Title: " + jsonData.Title);
             console.log("Year: " + jsonData.Year);
@@ -81,12 +80,13 @@ var getMeMovie = function (movieName) {
             console.log("Actors: " + jsonData.Actors);
             console.log("Rotton Tomatoes Rating: " + jsonData.Ratings[1].Value);
             console.log("//=======================================================//");
-        }            
+        }
     });
 };
 
 var doWhatItSays = function () {
     fs.readFile("random.txt", "utf8", function (error, data) {
+        console.log("");
         console.log(data);
         var dataArr = data.split(",");
         if (dataArr.length === 2) {
@@ -111,7 +111,11 @@ var pick = function (caseData, functionData) {
             doWhatItSays();
             break;
         default:
-            console.log("LIRI doesn't know that");
+            console.log("\n "+"Type any of the following commands after - 'node liri.js': " + "\n" +
+            " - spotify-this-song 'any song title' " + "\n" + 
+            " - movie-this 'any movie title' " + "\n" + 
+            " - do-what-it-says " + "\n" +
+            " Please use quotes for multiword titles!");
     }
 };
 
