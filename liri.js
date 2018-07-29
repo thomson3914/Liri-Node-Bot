@@ -14,20 +14,22 @@ var Spotify = require("node-spotify-api");
 
 var spotify = new Spotify(keys.spotify);
 
+var addedToLogFile = "Results added to log.txt file."
 
-// Log input into log.txt
-var addToLog = "node liri.js ";
+var input = process.argv;
 
-for (var i = 2; i < process.argv.length; i++) {
-    addToLog += process.argv[i] + " ";
-}
-addToLog = addToLog.substring(0, addToLog.length - 1);
-fs.appendFile("log.txt", addToLog + '\n', function (err) {
-    if (err) {
-        console.log('Error in user logging: ' + err);
-    }
+function logData(logResults) {
+	// We then append the contents into the file
+	// If the file didn't exist then it gets created on the fly.
+	fs.appendFile("log.txt", logResults + "\r\n" , function(err) {
+
+	// If an error was experienced we say it.
+	if (err) {
+		console.log(err);
+	}
 });
 
+}
 
 var getArtistNames = function (artist) {
     return artist.name;
@@ -58,16 +60,34 @@ var getMeSpotify = function (songName) {
             }
             var song = data.tracks.items;
             for (var i = 0; i < 5; i++) {
-                console.log("");
-                console.log(i);
-                console.log("//=================== Song Details ======================//");
-                console.log("artist(s): " + song[i].artists.map(getArtistNames));
-                console.log("song name: " + song[i].name);
-                console.log("preview song: " + song[i].preview_url);
-                console.log("album: " + song[i].album.name);
-                console.log("//=======================================================//");
-            }
-        }
+
+                var defaultSong = 
+                "=======================================================================================================" + "\r\n" +
+                //Output the liri command plus movieName
+                "liri command: spotify-this-song " + song[5].name + "\r\n" +
+                "=======================================================================================================" + "\r\n" +
+				"Song #" + (i+1) + "\r\n" +
+                //Output the artist
+                "Artist: " + song[5].artists[0].name + "\r\n" + 
+                //Output the song's name.
+                "Song title: " + song[5].name + "\r\n" +
+                //Output a preview link of the song from Spotify.
+                "Preview song: " + song[5].preview_url + "\r\n" +
+                //Output the album that the song is from.
+                "Album: " + song[5].album.name + "\r\n" +
+                "=======================================================================================================";
+            
+                //Output default song info to terminal
+                console.log (defaultSong);
+                console.log(addedToLogFile);
+
+            }    
+                //Output default song info to log.txt file.
+                logData(defaultSong);
+        }    
+               
+            
+        
     );
 };
 
@@ -75,8 +95,9 @@ var getMeMovie = function (movieName) {
 
     if (movieName === undefined) {
         movieName = "Mr. Nobody";
-        log += "If you haven't watched 'Mr. Nobody', then you should: <http://www.imdb.com/title/tt0485947/> - It's on Netflix!";
-    }
+        console.log("If you haven't watched Mr. Nobody, then you should: http://www.imdb.com/title/tt0485947/");
+        console.log("It's on Netflix!")
+   }
 
 	figlet(movieName, function(err, data) {
 	    if (err) {
@@ -89,36 +110,57 @@ var getMeMovie = function (movieName) {
 
     var url = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
     request(url, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            var jsonData = JSON.parse(body);
-            console.log("");
-            console.log("//================== Movie Details ======================//");
-            console.log("Title: " + jsonData.Title);
-            console.log("Year: " + jsonData.Year);
-            console.log("Rated: " + jsonData.Rated);
-            console.log("IMDB Rating: " + jsonData.imdbRating);
-            console.log("Country: " + jsonData.Country);
-            console.log("Language: " + jsonData.Language);
-            console.log("Plot: " + jsonData.Plot);
-            console.log("Actors: " + jsonData.Actors);
-            console.log("Rotten Tomatoes Rating: " + jsonData.Ratings[1].Value);
-            console.log("//=======================================================//");
-        }
+
+        var movieInfo = JSON.parse(body);
+
+        // Create variable to hold Rotten Tomatoes Rating.
+        var tomatoRating = movieInfo.Ratings[1].Value;
+
+        var movieResult = 
+            //Line break
+            "=======================================================================================================" + "\r\n" +
+            //Output the liri command plus movieName
+            "liri command: movie-this " + movieName + "\r\n" +
+            //Line break
+            "=======================================================================================================" + "\r\n" +
+            //Title of the movie.
+            "Title: " + movieInfo.Title + "\r\n" +
+            //Year the movie came out.
+            "Year movie was released: " + movieInfo.Year + "\r\n" +
+            //IMDB Rating of the movie.
+            "IMDB movie rating (out of 10): " + movieInfo.imdbRating + "\r\n" +
+            //Rotten Tomatoes rating of the movie.
+            "Rotten Tomatoes rating (out of 100%): " + tomatoRating + "\r\n" +
+            //Country where the movie was produced.
+            "Filmed in: " + movieInfo.Country + "\r\n" +
+            //Language of the movie.
+            "Language: " + movieInfo.Language + "\r\n" + 
+            //Plot of the movie.
+            "Movie plot: " + movieInfo.Plot + "\r\n" +
+            //Actors in the movie.
+            "Actors: " + movieInfo.Actors + "\r\n" +
+            //Line break
+            "======================================================================================================="
+
+        //Output the movie information to the terminal.
+        console.log(movieResult);
+        //Output the movie information to the log.txt file.
+        logData(movieResult);
     });
 };
 
+
 var doWhatItSays = function () {
-    fs.readFile("random.txt", "utf8", function (error, data) {
-        console.log("");
-        console.log(data);
-        var dataArr = data.split(",");
-        if (dataArr.length === 2) {
-            pick(dataArr[0], dataArr[1]);
-        } else if (dataArr.length === 1) {
-            pick(dataArr[0]);
-        }
+    fs.readFile("random.txt", "utf8", function(error, data) {
+
+  		if (error) {
+    		return console.log(error);
+  		}
+  		var songdataArray = data.split(",");
+  		//Call the getSongInfo function to display the song info for "I want it that way."
+  		getMeSpotify(songdataArray[1]);
     });
-};
+};getMeSpotify
 
 
 // Function for determining which command is executed
