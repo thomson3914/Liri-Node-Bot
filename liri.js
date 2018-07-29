@@ -6,6 +6,10 @@ var fs = require("fs");
 
 var keys = require("./keys.js");
 
+var figlet = require('figlet');
+
+var columnify = require('columnify')
+
 var Spotify = require("node-spotify-api");
 
 var spotify = new Spotify(keys.spotify);
@@ -33,6 +37,15 @@ var getMeSpotify = function (songName) {
     if (songName === undefined) {
         songName = "The Sign";
     }
+
+    figlet(songName, function(err, data) {
+	    if (err) {
+	        console.log('Something went wrong...');
+	        console.dir(err);
+	        return;
+	    }
+	    console.log(data);
+	});
 
     spotify.search({
         type: "track",
@@ -64,6 +77,16 @@ var getMeMovie = function (movieName) {
         movieName = "Mr. Nobody";
         log += "If you haven't watched 'Mr. Nobody', then you should: <http://www.imdb.com/title/tt0485947/> - It's on Netflix!";
     }
+
+	figlet(movieName, function(err, data) {
+	    if (err) {
+	        console.log('Something went wrong...');
+	        console.dir(err);
+	        return;
+	    }
+	    console.log(data)
+	});
+
     var url = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
     request(url, function (error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -78,7 +101,7 @@ var getMeMovie = function (movieName) {
             console.log("Language: " + jsonData.Language);
             console.log("Plot: " + jsonData.Plot);
             console.log("Actors: " + jsonData.Actors);
-            console.log("Rotton Tomatoes Rating: " + jsonData.Ratings[1].Value);
+            console.log("Rotten Tomatoes Rating: " + jsonData.Ratings[1].Value);
             console.log("//=======================================================//");
         }
     });

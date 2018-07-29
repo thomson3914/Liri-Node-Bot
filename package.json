@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/thomson3914/Liri-node-app#readme",
   "dependencies": {
+    "columnify": "^1.5.4",
     "dotenv": "^6.0.0",
+    "figlet": "^1.2.0",
     "moment": "^2.22.2",
     "node-spotify-api": "^1.0.7",
     "omdb-js": "^1.0.0",

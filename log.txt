@@ -556,3 +556,7 @@ node liri.js do-what-it-says
 node liri.js spotify-this-song short people
 node liri.js movie-this caddy shack
 node liri.js movie-this star wars
+node liri.js spotify-this-song
+node liri.js movie-this babe
+node liri.js spotify-this-song panama
+node liri.js movie-this footloose
