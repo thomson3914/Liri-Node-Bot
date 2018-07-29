@@ -1368,3 +1368,12 @@ Song title: The Sign
 Preview song: https://p.scdn.co/mp3-preview/4c463359f67dd3546db7294d236dd0ae991882ff?cid=747dcf1095cb4578aa03424f53d21be9
 Album: The Sign (US Album) [Remastered]
 =======================================================================================================
+=======================================================================================================
+liri command: spotify-this-song Bye Bye Bye / I Want It That Way (Glee Cast Version)
+=======================================================================================================
+Song #5
+Artist: Glee Cast
+Song title: Bye Bye Bye / I Want It That Way (Glee Cast Version)
+Preview song: https://p.scdn.co/mp3-preview/3aa63b5c98b98ae333e567813e5c720abb2914f0?cid=747dcf1095cb4578aa03424f53d21be9
+Album: Bye Bye Bye / I Want It That Way (Glee Cast Version)
+=======================================================================================================
