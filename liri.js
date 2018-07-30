@@ -24,67 +24,133 @@ function logData(logResults) {
             console.log(err);
         }
     });
-
 }
 
-var getArtistNames = function (artist) {
-    return artist.name;
-};
 
-var getMeSpotify = function (songName) {
-    if (songName === undefined) {
-        songName = "The Sign";
+function getMeSpotify(search) {
+    var songname = search;
+    var logResults = ""
+    if (!search) {
+        var songname = "The Sign Ace of Base";
     }
 
-    figlet(songName, function (err, data) {
+    figlet(search, function (err, data) {
         if (err) {
             console.log('Something went wrong...');
             console.dir(err);
             return;
         }
         console.log(data);
+        console.log("=======================================================================================================");
+        console.log( "liri command: spotify-this-song " + songname);
     });
 
-    spotify.search({
-        type: "track",
-        query: songName
-    },
-        function (err, data) {
-            if (err) {
-                console.log("Error: " + err);
-                return;
-            }
+    spotify.search({ type: "track", query: songname }, function (error, data) {
+
+        if (!error) {
             var song = data.tracks.items;
             for (var i = 0; i < 5; i++) {
-
-                var defaultSong =
-                    "=======================================================================================================" + "\r\n" +
-                    "liri command: spotify-this-song " + song[5].name + "\r\n" +
+                if (song[i]) {
+                    var artists = "unavailable";
+                    if (song[i].artists[0]) {
+                        artists = "";
+                        for (x = 0; x < song[i].artists.length; x++) {
+                            artists += song[i].artists[x].name
+                            if (x + 1 < song[i].artists.length) {
+                                artists += ", "; 
+                            }
+                        }
+                    }
+                    var preview = "unavailable";
+                    if (song[i].preview_url) { 
+                        preview = song[i].preview_url;
+                    }
+                    var music =
                     "=======================================================================================================" + "\r\n" +
                     "Song #" + (i + 1) + "\r\n" +
                     //Output the artist
-                    "Artist: " + song[5].artists[0].name + "\r\n" +
+                    "Artist: " + song[i].artists[0].name + "\r\n" +
                     //Output the song's name.
-                    "Song title: " + song[5].name + "\r\n" +
+                    "Song title: " + song[i].name + "\r\n" +
                     //Output a preview link of the song from Spotify.
-                    "Preview song: " + song[5].preview_url + "\r\n" +
+                    "Preview song: " + song[i].preview_url + "\r\n" +
                     //Output the album that the song is from.
-                    "Album: " + song[5].album.name + "\r\n" +
+                    "Album: " + song[i].album.name + "\r\n" +
                     "=======================================================================================================";
 
-                //Output default song info to terminal
-                console.log(defaultSong);
-                console.log(addedToLogFile);
-
+                    logResults += music;
+                }
             }
-            //Output default song info to log.txt file.
-            logData(defaultSong);
+        } else {
+            console.log("Error :" + error);
         }
+        console.log(logResults);
+        console.log(addedToLogFile);
+        logData(logResults); 
+    });
+
+}
 
 
 
-    );
-};
+// var getArtistNames = function (artist) {
+//     return artist.name;
+// };
+
+// var getMeSpotify = function (songName) {
+//     if (songName === undefined) {
+//         songName = "The Sign";
+//     }
+
+    // figlet(songName, function (err, data) {
+    //     if (err) {
+    //         console.log('Something went wrong...');
+    //         console.dir(err);
+    //         return;
+    //     }
+    //     console.log(data);
+    //     console.log("=======================================================================================================");
+    //     console.log( "liri command: spotify-this-song " + songName);
+    // });
+
+//     spotify.search({
+//         type: "track",
+//         query: songName
+//     },
+//         function (err, data) {
+//             if (err) {
+//                 console.log("Error: " + err);
+//                 return;
+//             }
+//             var song = data.tracks.items;
+//             for (var i = 0; i < 5; i++) {
+
+            //     var defaultSong =
+            //         "=======================================================================================================" + "\r\n" +
+            //         "Song #" + (i + 1) + "\r\n" +
+            //         //Output the artist
+            //         "Artist: " + song[i].artists[0].name + "\r\n" +
+            //         //Output the song's name.
+            //         "Song title: " + song[i].name + "\r\n" +
+            //         //Output a preview link of the song from Spotify.
+            //         "Preview song: " + song[i].preview_url + "\r\n" +
+            //         //Output the album that the song is from.
+            //         "Album: " + song[i].album.name + "\r\n" +
+            //         "=======================================================================================================";
+
+            //     //Output default song info to terminal
+            //     console.log(defaultSong); 
+            //     console.log(addedToLogFile); 
+            // }
+                 
+            //     //Output default song info to log.txt file.
+            //     logData(defaultSong); 
+//         }
+
+
+
+//     );
+// };
 
 var getMeMovie = function (movieName) {
 
@@ -101,6 +167,8 @@ var getMeMovie = function (movieName) {
             return;
         }
         console.log(data)
+        console.log("=======================================================================================================")
+        console.log("liri command: movie-this " + movieName )
     });
 
     var url = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
@@ -109,13 +177,13 @@ var getMeMovie = function (movieName) {
         var movieInfo = JSON.parse(body);
 
         // Create variable to hold Rotten Tomatoes Rating.
-        var tomatoRating = movieInfo.Ratings[1].Value;
+        // var tomatoRating = movieInfo.Ratings[1].Value;
 
         var movieResult =
-            //Line break
-            "=======================================================================================================" + "\r\n" +
-            //Output the liri command plus movieName
-            "liri command: movie-this " + movieName + "\r\n" +
+            // //Line break
+            // "=======================================================================================================" + "\r\n" +
+            // //Output the liri command plus movieName
+            // "liri command: movie-this " + movieName + "\r\n" +
             //Line break
             "=======================================================================================================" + "\r\n" +
             //Title of the movie.
@@ -125,7 +193,7 @@ var getMeMovie = function (movieName) {
             //IMDB Rating of the movie.
             "IMDB movie rating (out of 10): " + movieInfo.imdbRating + "\r\n" +
             //Rotten Tomatoes rating of the movie.
-            "Rotten Tomatoes rating (out of 100%): " + tomatoRating + "\r\n" +
+            "Rotten Tomatoes rating (out of 100%): " + movieInfo.Ratings[1].Value + "\r\n" +
             //Country where the movie was produced.
             "Filmed in: " + movieInfo.Country + "\r\n" +
             //Language of the movie.
@@ -139,6 +207,7 @@ var getMeMovie = function (movieName) {
 
         //Output the movie information to the terminal.
         console.log(movieResult);
+        console.log(addedToLogFile); 
         //Output the movie information to the log.txt file.
         logData(movieResult);
     });
