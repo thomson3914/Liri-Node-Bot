@@ -16,6 +16,7 @@ var spotify = new Spotify(keys.spotify);
 
 var addedToLogFile = "Results added to log.txt file."
 
+// Function for logging data to the log.txt
 function logData(logResults) {
 
     fs.appendFile("log.txt", logResults + "\r\n", function (err) {
@@ -26,7 +27,7 @@ function logData(logResults) {
     });
 }
 
-
+// Function for the command getMeSpotify
 function getMeSpotify(search) {
     var songname = search;
     var logResults = ""
@@ -42,7 +43,7 @@ function getMeSpotify(search) {
         }
         console.log(data);
         console.log("=======================================================================================================");
-        console.log( "liri command: spotify-this-song " + songname);
+        console.log("liri command: spotify-this-song " + songname);
     });
 
     spotify.search({ type: "track", query: songname }, function (error, data) {
@@ -57,26 +58,26 @@ function getMeSpotify(search) {
                         for (x = 0; x < song[i].artists.length; x++) {
                             artists += song[i].artists[x].name
                             if (x + 1 < song[i].artists.length) {
-                                artists += ", "; 
+                                artists += ", ";
                             }
                         }
                     }
                     var preview = "unavailable";
-                    if (song[i].preview_url) { 
+                    if (song[i].preview_url) {
                         preview = song[i].preview_url;
                     }
                     var music =
-                    "=======================================================================================================" + "\r\n" +
-                    "Song #" + (i + 1) + "\r\n" +
-                    //Output the artist
-                    "Artist: " + song[i].artists[0].name + "\r\n" +
-                    //Output the song's name.
-                    "Song title: " + song[i].name + "\r\n" +
-                    //Output a preview link of the song from Spotify.
-                    "Preview song: " + song[i].preview_url + "\r\n" +
-                    //Output the album that the song is from.
-                    "Album: " + song[i].album.name + "\r\n" +
-                    "=======================================================================================================";
+                        "=======================================================================================================" + "\r\n" +
+                        "Song #" + (i + 1) + "\r\n" +
+                        //Output the artist
+                        "Artist: " + song[i].artists[0].name + "\r\n" +
+                        //Output the song's name.
+                        "Song title: " + song[i].name + "\r\n" +
+                        //Output a preview link of the song from Spotify.
+                        "Preview song: " + song[i].preview_url + "\r\n" +
+                        //Output the album that the song is from.
+                        "Album: " + song[i].album.name + "\r\n" +
+                        "=======================================================================================================";
 
                     logResults += music;
                 }
@@ -86,72 +87,12 @@ function getMeSpotify(search) {
         }
         console.log(logResults);
         console.log(addedToLogFile);
-        logData(logResults); 
+        logData(logResults);
     });
 
 }
 
-
-
-// var getArtistNames = function (artist) {
-//     return artist.name;
-// };
-
-// var getMeSpotify = function (songName) {
-//     if (songName === undefined) {
-//         songName = "The Sign";
-//     }
-
-    // figlet(songName, function (err, data) {
-    //     if (err) {
-    //         console.log('Something went wrong...');
-    //         console.dir(err);
-    //         return;
-    //     }
-    //     console.log(data);
-    //     console.log("=======================================================================================================");
-    //     console.log( "liri command: spotify-this-song " + songName);
-    // });
-
-//     spotify.search({
-//         type: "track",
-//         query: songName
-//     },
-//         function (err, data) {
-//             if (err) {
-//                 console.log("Error: " + err);
-//                 return;
-//             }
-//             var song = data.tracks.items;
-//             for (var i = 0; i < 5; i++) {
-
-            //     var defaultSong =
-            //         "=======================================================================================================" + "\r\n" +
-            //         "Song #" + (i + 1) + "\r\n" +
-            //         //Output the artist
-            //         "Artist: " + song[i].artists[0].name + "\r\n" +
-            //         //Output the song's name.
-            //         "Song title: " + song[i].name + "\r\n" +
-            //         //Output a preview link of the song from Spotify.
-            //         "Preview song: " + song[i].preview_url + "\r\n" +
-            //         //Output the album that the song is from.
-            //         "Album: " + song[i].album.name + "\r\n" +
-            //         "=======================================================================================================";
-
-            //     //Output default song info to terminal
-            //     console.log(defaultSong); 
-            //     console.log(addedToLogFile); 
-            // }
-                 
-            //     //Output default song info to log.txt file.
-            //     logData(defaultSong); 
-//         }
-
-
-
-//     );
-// };
-
+// Function for the command getMeMovies
 var getMeMovie = function (movieName) {
 
     if (movieName === undefined) {
@@ -168,7 +109,7 @@ var getMeMovie = function (movieName) {
         }
         console.log(data)
         console.log("=======================================================================================================")
-        console.log("liri command: movie-this " + movieName )
+        console.log("liri command: movie-this " + movieName)
     });
 
     var url = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
@@ -176,14 +117,7 @@ var getMeMovie = function (movieName) {
 
         var movieInfo = JSON.parse(body);
 
-        // Create variable to hold Rotten Tomatoes Rating.
-        // var tomatoRating = movieInfo.Ratings[1].Value;
-
         var movieResult =
-            // //Line break
-            // "=======================================================================================================" + "\r\n" +
-            // //Output the liri command plus movieName
-            // "liri command: movie-this " + movieName + "\r\n" +
             //Line break
             "=======================================================================================================" + "\r\n" +
             //Title of the movie.
@@ -207,13 +141,13 @@ var getMeMovie = function (movieName) {
 
         //Output the movie information to the terminal.
         console.log(movieResult);
-        console.log(addedToLogFile); 
+        console.log(addedToLogFile);
         //Output the movie information to the log.txt file.
         logData(movieResult);
     });
 };
 
-
+// Function for the command doWhatItSays
 var doWhatItSays = function () {
     fs.readFile("random.txt", "utf8", function (error, data) {
 

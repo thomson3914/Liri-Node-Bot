@@ -10,10 +10,15 @@ It can take in one of the following commands:
     * `do-what-it-says`
 
 
-Technologies Used
+## Technologies Used
 
 * Node.js
+* Npm
 * Spotify API
 * Omdb
 * Require
 * fs
+* Figlet
+* Columnify
+* Keys
+* dotenv package
